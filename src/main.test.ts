@@ -6,6 +6,11 @@ const files = [
   "src/main.test.ts",
   "src/vite-env.d.ts",
   "src/main.ts",
+  "src/utils/help.ts",
+  "src2/main.ts",
+  "src2/sub/main.ts",
+  "src2/sub1/a.ts",
+  "src2/sub2/a.ts",
   ".gitignore",
   "package.json",
   "test.exs",
@@ -30,11 +35,11 @@ describe("gitslice", () => {
       gitslice({
         mode: "ignore",
         pathsToIgnore: [],
-        pathsToSlice: ["package-lock.json"],
+        pathsToSlice: ["package-lock.json", ".gitignore"],
         upstreamRepoFiles: files,
       }),
     ).toEqual<GitSliceOutput>({
-      filesToSlice: ["package-lock.json"],
+      filesToSlice: ["package-lock.json", ".gitignore"],
     });
   });
 
@@ -42,12 +47,19 @@ describe("gitslice", () => {
     expect(
       gitslice({
         mode: "ignore",
-        pathsToIgnore: [],
-        pathsToSlice: ["src"],
+        pathsToIgnore: ["src2/sub1", "src2/sub2/*"],
+        pathsToSlice: ["src/*", "src2"], // slice everything in both the src and src2 folders
         upstreamRepoFiles: files,
       }),
     ).toEqual<GitSliceOutput>({
-      filesToSlice: ["src/main.test.ts", "src/vite-env.d.ts", "src/main.ts"],
+      filesToSlice: [
+        "src/main.test.ts",
+        "src/vite-env.d.ts",
+        "src/main.ts",
+        "src/utils/help.ts",
+        "src2/main.ts",
+        "src2/sub/main.ts",
+      ],
     });
   });
 
@@ -56,11 +68,15 @@ describe("gitslice", () => {
       gitslice({
         mode: "ignore",
         pathsToIgnore: ["src/main.ts"],
-        pathsToSlice: ["src"],
+        pathsToSlice: ["src/*"],
         upstreamRepoFiles: files,
       }),
     ).toEqual<GitSliceOutput>({
-      filesToSlice: ["src/main.test.ts", "src/vite-env.d.ts"],
+      filesToSlice: [
+        "src/main.test.ts",
+        "src/vite-env.d.ts",
+        "src/utils/help.ts",
+      ],
     });
   });
 
@@ -81,7 +97,7 @@ describe("gitslice", () => {
     expect(
       gitslice({
         mode: "slice",
-        pathsToIgnore: [".gitignore"],
+        pathsToIgnore: [".gitignore", "package.json"],
         pathsToSlice: [],
         upstreamRepoFiles: files,
       }),
@@ -91,7 +107,11 @@ describe("gitslice", () => {
         "src/main.test.ts",
         "src/vite-env.d.ts",
         "src/main.ts",
-        "package.json",
+        "src/utils/help.ts",
+        "src2/main.ts",
+        "src2/sub/main.ts",
+        "src2/sub1/a.ts",
+        "src2/sub2/a.ts",
         "test.exs",
         "tsconfig.json",
       ],
@@ -102,13 +122,15 @@ describe("gitslice", () => {
     expect(
       gitslice({
         mode: "slice",
-        pathsToIgnore: ["src"],
-        pathsToSlice: [],
+        pathsToIgnore: ["src/*", "src2"],
+        pathsToSlice: ["src2/sub1", "src2/sub2/*"],
         upstreamRepoFiles: files,
       }),
     ).toEqual<GitSliceOutput>({
       filesToSlice: [
         "package-lock.json",
+        "src2/sub1/a.ts",
+        "src2/sub2/a.ts",
         ".gitignore",
         "package.json",
         "test.exs",
@@ -121,7 +143,7 @@ describe("gitslice", () => {
     expect(
       gitslice({
         mode: "slice",
-        pathsToIgnore: ["src"],
+        pathsToIgnore: ["src/*", "src2"],
         pathsToSlice: ["src/main.ts"],
         upstreamRepoFiles: files,
       }),
