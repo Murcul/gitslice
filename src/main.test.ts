@@ -16,8 +16,9 @@ const files = [
   "test.exs",
   "tsconfig.json",
 ];
-describe("gitslice", () => {
-  it("in ignore mode, ignores everything if no pathsToSlice", () => {
+
+describe("ignore mode", () => {
+  it("ignores everything if no pathsToSlice", () => {
     expect(
       gitslice({
         mode: "ignore",
@@ -30,7 +31,7 @@ describe("gitslice", () => {
     });
   });
 
-  it("in ignore mode, only slices the given file pathToSlice", () => {
+  it("only slices the given file pathToSlice", () => {
     expect(
       gitslice({
         mode: "ignore",
@@ -43,7 +44,7 @@ describe("gitslice", () => {
     });
   });
 
-  it("in ignore mode, only slices the given folder pathToSlice and its contents", () => {
+  it("only slices the given folder pathToSlice and its contents", () => {
     expect(
       gitslice({
         mode: "ignore",
@@ -63,7 +64,7 @@ describe("gitslice", () => {
     });
   });
 
-  it("in ignore mode, ignores specific subfiles set in pathsToIgnore", () => {
+  it("ignores specific subfiles set in pathsToIgnore", () => {
     expect(
       gitslice({
         mode: "ignore",
@@ -80,7 +81,36 @@ describe("gitslice", () => {
     });
   });
 
-  it("in slice mode, slices everything if no pathsToIgnore", () => {
+  it("can slice files in multiple subfolders using ** wildcards", () => {
+    expect(
+      gitslice({
+        mode: "ignore",
+        pathsToIgnore: ["src/**/ignored.ts"],
+        pathsToSlice: ["src"],
+        upstreamRepoFiles: [
+          "src/1.ts",
+          "src/a/1.ts",
+          "src/ignored.ts",
+          "src/a/to_slice.ts",
+          "src/b/c/to_slice.ts",
+          "src/b/c/ignored.ts",
+          "src/b/ignored.ts",
+          "src/a/b/ignored.ts",
+          "ignored.ts",
+        ],
+      }),
+    ).toEqual<GitSliceOutput>({
+      filesToSlice: [
+        "src/1.ts",
+        "src/a/1.ts",
+        "src/a/to_slice.ts",
+        "src/b/c/to_slice.ts",
+      ],
+    });
+  });
+});
+describe("slice mode", () => {
+  it("slices everything if no pathsToIgnore", () => {
     expect(
       gitslice({
         mode: "slice",
@@ -93,7 +123,7 @@ describe("gitslice", () => {
     });
   });
 
-  it("in slice mode, ignores the given file in pathsToIgnore", () => {
+  it("ignores the given file in pathsToIgnore", () => {
     expect(
       gitslice({
         mode: "slice",
@@ -118,7 +148,7 @@ describe("gitslice", () => {
     });
   });
 
-  it("in slice mode, ignores the given folder and its contents in pathsToIgnore", () => {
+  it("ignores the given folder and its contents in pathsToIgnore", () => {
     expect(
       gitslice({
         mode: "slice",
@@ -139,7 +169,7 @@ describe("gitslice", () => {
     });
   });
 
-  it("in slice mode, ignores the given folder and its contents in pathsToIgnore, but keep an explicit subfile if asked for", () => {
+  it("ignores the given folder and its contents in pathsToIgnore, but keep an explicit subfile if asked for", () => {
     expect(
       gitslice({
         mode: "slice",
@@ -155,6 +185,34 @@ describe("gitslice", () => {
         "package.json",
         "test.exs",
         "tsconfig.json",
+      ],
+    });
+  });
+
+  it("can ignore files in multiple subfolders using ** wildcards", () => {
+    expect(
+      gitslice({
+        mode: "slice",
+        pathsToIgnore: ["src"],
+        pathsToSlice: ["src/**/to_slice.ts"],
+        upstreamRepoFiles: [
+          "src/1.ts",
+          "src/to_slice.ts",
+          "src/a/1.ts",
+          "src/a/to_slice.ts",
+          "src/b/c/to_slice.ts",
+          "src/b/c/ignored.ts",
+          "src/b/ignored.ts",
+          "src/a/b/ignored.ts",
+          "sliced.ts",
+        ],
+      }),
+    ).toEqual<GitSliceOutput>({
+      filesToSlice: [
+        "src/to_slice.ts",
+        "src/a/to_slice.ts",
+        "src/b/c/to_slice.ts",
+        "sliced.ts",
       ],
     });
   });
