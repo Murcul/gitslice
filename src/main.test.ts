@@ -81,7 +81,7 @@ describe("ignore mode", () => {
     });
   });
 
-  it("can slice files in multiple subfolders using ** wildcards", () => {
+  it("can ignore files in multiple subfolders using ** wildcards", () => {
     expect(
       gitslice({
         mode: "ignore",
@@ -189,7 +189,7 @@ describe("slice mode", () => {
     });
   });
 
-  it("can ignore files in multiple subfolders using ** wildcards", () => {
+  it("can slice files in multiple subfolders using ** wildcards", () => {
     expect(
       gitslice({
         mode: "slice",
