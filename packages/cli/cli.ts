@@ -1,7 +1,8 @@
-import { Command, Option } from "commander";
-import { z } from "zod";
 import fs from "fs";
 import path from "path";
+import { Command, Option } from "commander";
+import { z } from "zod";
+import { globby } from "globby";
 import { gitslice } from "@gitslice/ignore";
 
 const program = new Command();
@@ -89,9 +90,11 @@ const main = async () => {
     process.exit(2);
   }
 
-  const files = fs.readdirSync(repoPath, {
-    recursive: true,
-    encoding: "utf8",
+  const files = await globby(["**"], {
+    cwd: repoPath,
+    gitignore: true,
+    dot: true,
+    ignore: [".git"],
   });
 
   const result = gitslice({

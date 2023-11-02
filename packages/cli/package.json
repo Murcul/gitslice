@@ -5,12 +5,13 @@
     "gitslice": "./dist/cli.js"
   },
   "scripts": {
-    "dev": "tsx index.ts",
+    "dev": "tsx cli.ts",
     "build": "tsx build.ts"
   },
   "dependencies": {
     "@gitslice/ignore": "*",
     "commander": "^11.1.0",
+    "globby": "^13.2.2",
     "zod": "^3.22.4"
   },
   "devDependencies": {
