@@ -64,7 +64,11 @@ if (!fs.existsSync(repoPath)) {
 }
 
 const main = async () => {
-  const config = await import(configPath);
+  const config = JSON.parse(
+    fs.readFileSync(configPath, {
+      encoding: "utf-8",
+    }),
+  );
   const configSchema = z.object({
     folders: z
       .string({
@@ -77,7 +81,7 @@ const main = async () => {
       })
       .array(),
   });
-  const parsedConfig = configSchema.safeParse(config.default);
+  const parsedConfig = configSchema.safeParse(config);
   if (!parsedConfig.success) {
     console.log(
       `${parsedOptions.data.config}: Invalid config: ${parsedConfig.error.errors[0].message}`,
