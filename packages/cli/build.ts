@@ -2,9 +2,9 @@ import * as esbuild from "esbuild";
 
 (async () =>
   await esbuild.build({
-    entryPoints: ["index.ts"],
+    entryPoints: ["cli.ts"],
     bundle: true,
-    outfile: "dist/index.js",
+    outfile: "dist/cli.js",
     platform: "node",
     banner: {
       js: "#!/usr/bin/env node",

@@ -2,7 +2,7 @@
   "name": "@gitslice/cli",
   "version": "0.1.0",
   "bin": {
-    "gitslice": "dist/bin.js"
+    "gitslice": "./dist/cli.js"
   },
   "scripts": {
     "dev": "tsx index.ts",
