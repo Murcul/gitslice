@@ -1,0 +1,4 @@
+{
+  "folders": ["packages"],
+  "ignore": ["packages/cli"]
+}

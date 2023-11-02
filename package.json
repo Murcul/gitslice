@@ -3,22 +3,19 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview",
-    "test": "vitest",
+    "test": "lerna run test",
     "format": "prettier . --write",
     "format:check": "prettier --check ."
   },
   "devDependencies": {
-    "@types/micromatch": "^4.0.4",
+    "lerna": "^7.4.2",
     "prettier": "3.0.3",
+    "tsx": "^3.14.0",
     "typescript": "^5.0.2",
-    "vite": "^4.4.5",
     "vitest": "^0.34.6"
-  },
-  "dependencies": {
-    "micromatch": "^4.0.5"
   }
 }
