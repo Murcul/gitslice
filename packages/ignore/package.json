@@ -1,0 +1,13 @@
+{
+  "name": "@gitslice/ignore",
+  "version": "0.1.0",
+  "scripts": {
+    "test": "vitest"
+  },
+  "devDependencies": {
+    "@types/micromatch": "^4.0.4"
+  },
+  "dependencies": {
+    "micromatch": "^4.0.5"
+  }
+}

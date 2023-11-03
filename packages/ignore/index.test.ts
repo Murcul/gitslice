@@ -1,5 +1,5 @@
 import { expect, describe, it } from "vitest";
-import { GitSliceOutput, gitslice } from "./main";
+import { GitSliceOutput, gitslice } from ".";
 
 const files = [
   "package-lock.json",
@@ -108,6 +108,25 @@ describe("ignore mode", () => {
       ],
     });
   });
+
+  it("ignores . files in folders in pathsToIgnore", () => {
+    expect(
+      gitslice({
+        mode: "ignore",
+        pathsToIgnore: ["src/secrets"],
+        pathsToSlice: ["src"],
+        upstreamRepoFiles: [
+          "secret",
+          "src/slice",
+          "src/slice/slice",
+          "src/.slice",
+          "src/secrets/ignored",
+        ],
+      }),
+    ).toEqual<GitSliceOutput>({
+      filesToSlice: ["src/slice", "src/slice/slice", "src/.slice"],
+    });
+  });
 });
 describe("slice mode", () => {
   it("slices everything if no pathsToIgnore", () => {
@@ -213,6 +232,32 @@ describe("slice mode", () => {
         "src/a/to_slice.ts",
         "src/b/c/to_slice.ts",
         "sliced.ts",
+      ],
+    });
+  });
+
+  it("slices . files inside folders in pathsToSlice", () => {
+    expect(
+      gitslice({
+        mode: "slice",
+        pathsToIgnore: ["secrets"],
+        pathsToSlice: ["secrets/public"],
+        upstreamRepoFiles: [
+          "slice",
+          "public",
+          ".public",
+          "secrets/secret1.txt",
+          "secrets/public/known.txt",
+          "secrets/public/.known.txt",
+        ],
+      }),
+    ).toEqual<GitSliceOutput>({
+      filesToSlice: [
+        "slice",
+        "public",
+        ".public",
+        "secrets/public/known.txt",
+        "secrets/public/.known.txt",
       ],
     });
   });

@@ -31,6 +31,7 @@ const matcher = (files: string[], toMatch: string[], toExclude: string[]) => {
     ],
     {
       bash: true,
+      dot: true,
     },
   );
 };
