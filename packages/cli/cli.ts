@@ -3,7 +3,7 @@ import path from "path";
 import { Command, Option } from "commander";
 import { z } from "zod";
 import { globby } from "globby";
-import { gitslice } from "@gitslice/ignore";
+import { gitslice } from "@gitstart/gitslice-ignore";
 
 const program = new Command();
 program

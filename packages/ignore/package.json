@@ -1,13 +1,20 @@
 {
-  "name": "@gitslice/ignore",
-  "version": "0.1.0",
-  "private": true,
+  "name": "@gitstart/gitslice-ignore",
+  "version": "0.1.2",
+  "license": "GPL-3.0-only",
+  "main": "dist/index.js",
   "scripts": {
-    "test": "vitest"
+    "test": "vitest",
+    "build": "tsx build.ts"
   },
   "devDependencies": {
     "@types/micromatch": "^4.0.4"
   },
+  "types": "./index.ts",
+  "files": [
+    "dist",
+    "index.ts"
+  ],
   "dependencies": {
     "micromatch": "^4.0.5"
   }
