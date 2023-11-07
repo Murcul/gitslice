@@ -2,7 +2,10 @@
   "name": "gitslice",
   "version": "0.1.0",
   "description": "A CLI to gitslice your local repos",
-  "keywords": ["gitslice", "gitstart"],
+  "keywords": [
+    "gitslice",
+    "gitstart"
+  ],
   "homepage": "https://gitstart.com/",
   "bugs": {
     "url": "https://github.com/Murcul/gitslice/issues"
