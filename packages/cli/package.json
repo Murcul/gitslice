@@ -1,10 +1,20 @@
 {
   "name": "gitslice",
   "version": "0.1.0",
+  "description": "A CLI to gitslice your local repos",
+  "keywords": ["gitslice", "gitstart"],
+  "homepage": "https://gitstart.com/",
+  "bugs": {
+    "url": "https://github.com/Murcul/gitslice/issues"
+  },
   "bin": {
     "gitslice": "./dist/cli.js"
   },
   "license": "GPL-3.0-only",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Murcul/gitslice.git"
+  },
   "scripts": {
     "dev": "tsx cli.ts",
     "build": "tsx build.ts"
