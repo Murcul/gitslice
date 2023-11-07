@@ -1,5 +1,5 @@
 {
-  "name": "@gitslice/cli",
+  "name": "gitslice",
   "version": "0.1.0",
   "bin": {
     "gitslice": "./dist/cli.js"
