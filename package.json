@@ -7,9 +7,10 @@
     "packages/*"
   ],
   "scripts": {
-    "test": "lerna run test",
+    "build": "lerna run build",
     "format": "prettier . --write",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "test": "lerna run test"
   },
   "devDependencies": {
     "esbuild": "0.19.5",
