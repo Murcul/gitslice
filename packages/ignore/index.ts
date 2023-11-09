@@ -4,7 +4,7 @@ type GitSliceInput = {
   /**
    * Use "ignore" when you want to ignore everything by default.
    * Use "slice" when you want to slice everything by default
-   */ 
+   */
   mode: "ignore" | "slice";
   /**
    * The paths that you want to ensure are sliced
