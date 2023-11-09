@@ -1,11 +1,11 @@
-import micromatch, { parse } from "micromatch";
+import micromatch from "micromatch";
 
 type GitSliceInput = {
   mode: "ignore" | "slice";
   pathsToSlice: string[];
   pathsToIgnore: string[];
-  // All the files that are in the upstream repo, relative to the root folder of the upstream repo.
-  upstreamRepoFiles: string[];
+  // All the files that are in the repo, relative to the root folder of the repo.
+  files: string[];
 };
 
 export type GitSliceOutput = {
@@ -44,20 +44,18 @@ export function gitslice(input: GitSliceInput): GitSliceOutput {
   if (input.mode === "ignore") {
     return {
       filesToSlice: matcher(
-        input.upstreamRepoFiles,
+        input.files,
         input.pathsToSlice,
         input.pathsToIgnore,
       ),
     };
   }
   const toIgnore = matcher(
-    input.upstreamRepoFiles,
+    input.files,
     input.pathsToIgnore,
     input.pathsToSlice,
   );
   return {
-    filesToSlice: input.upstreamRepoFiles.filter(
-      (file) => !toIgnore.includes(file),
-    ),
+    filesToSlice: input.files.filter((file) => !toIgnore.includes(file)),
   };
 }

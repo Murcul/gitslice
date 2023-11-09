@@ -24,7 +24,7 @@ describe("ignore mode", () => {
         mode: "ignore",
         pathsToIgnore: [],
         pathsToSlice: [],
-        upstreamRepoFiles: files,
+        files,
       }),
     ).toEqual<GitSliceOutput>({
       filesToSlice: [],
@@ -37,7 +37,7 @@ describe("ignore mode", () => {
         mode: "ignore",
         pathsToIgnore: [],
         pathsToSlice: ["package-lock.json", ".gitignore"],
-        upstreamRepoFiles: files,
+        files,
       }),
     ).toEqual<GitSliceOutput>({
       filesToSlice: ["package-lock.json", ".gitignore"],
@@ -50,7 +50,7 @@ describe("ignore mode", () => {
         mode: "ignore",
         pathsToIgnore: ["src2/sub1", "src2/sub2/*"],
         pathsToSlice: ["src/*", "src2"], // slice everything in both the src and src2 folders
-        upstreamRepoFiles: files,
+        files,
       }),
     ).toEqual<GitSliceOutput>({
       filesToSlice: [
@@ -70,7 +70,7 @@ describe("ignore mode", () => {
         mode: "ignore",
         pathsToIgnore: ["src/main.ts"],
         pathsToSlice: ["src/*"],
-        upstreamRepoFiles: files,
+        files,
       }),
     ).toEqual<GitSliceOutput>({
       filesToSlice: [
@@ -87,7 +87,7 @@ describe("ignore mode", () => {
         mode: "ignore",
         pathsToIgnore: ["src/**/ignored.ts"],
         pathsToSlice: ["src"],
-        upstreamRepoFiles: [
+        files: [
           "src/1.ts",
           "src/a/1.ts",
           "src/ignored.ts",
@@ -115,7 +115,7 @@ describe("ignore mode", () => {
         mode: "ignore",
         pathsToIgnore: ["src/secrets"],
         pathsToSlice: ["src"],
-        upstreamRepoFiles: [
+        files: [
           "secret",
           "src/slice",
           "src/slice/slice",
@@ -134,7 +134,7 @@ describe("ignore mode", () => {
         mode: "ignore",
         pathsToIgnore: [],
         pathsToSlice: ["*"],
-        upstreamRepoFiles: ["a", "a/b"],
+        files: ["a", "a/b"],
       }),
     ).toEqual<GitSliceOutput>({
       filesToSlice: ["a", "a/b"],
@@ -147,7 +147,7 @@ describe("ignore mode", () => {
         mode: "ignore",
         pathsToIgnore: [],
         pathsToSlice: ["/*"],
-        upstreamRepoFiles: ["a", "a/b"],
+        files: ["a", "a/b"],
       }),
     ).toEqual<GitSliceOutput>({
       filesToSlice: ["a", "a/b"],
@@ -160,7 +160,7 @@ describe("ignore mode", () => {
         mode: "ignore",
         pathsToIgnore: ["c", "d/e"],
         pathsToSlice: ["*"],
-        upstreamRepoFiles: ["a", "a/b", "c", "d/e"],
+        files: ["a", "a/b", "c", "d/e"],
       }),
     ).toEqual<GitSliceOutput>({
       filesToSlice: ["a", "a/b"],
@@ -173,7 +173,7 @@ describe("ignore mode", () => {
         mode: "ignore",
         pathsToIgnore: ["c", "d/e"],
         pathsToSlice: ["/*"],
-        upstreamRepoFiles: ["a", "a/b", "c", "d/e"],
+        files: ["a", "a/b", "c", "d/e"],
       }),
     ).toEqual<GitSliceOutput>({
       filesToSlice: ["a", "a/b"],
@@ -186,7 +186,7 @@ describe("ignore mode", () => {
         mode: "ignore",
         pathsToIgnore: [],
         pathsToSlice: ["/a"],
-        upstreamRepoFiles: ["a", "a/b", "c", "d/e"],
+        files: ["a", "a/b", "c", "d/e"],
       }),
     ).toEqual<GitSliceOutput>({
       filesToSlice: ["a", "a/b"],
@@ -199,7 +199,7 @@ describe("ignore mode", () => {
         mode: "ignore",
         pathsToIgnore: ["/a/b"],
         pathsToSlice: ["/a"],
-        upstreamRepoFiles: ["a", "a/b", "c", "d/e"],
+        files: ["a", "a/b", "c", "d/e"],
       }),
     ).toEqual<GitSliceOutput>({
       filesToSlice: ["a"],
@@ -212,7 +212,7 @@ describe("ignore mode", () => {
         mode: "ignore",
         pathsToIgnore: [],
         pathsToSlice: ["/"],
-        upstreamRepoFiles: ["a", "a/b", "c", "d/e"],
+        files: ["a", "a/b", "c", "d/e"],
       }),
     ).toEqual<GitSliceOutput>({
       filesToSlice: [],
@@ -226,7 +226,7 @@ describe("slice mode", () => {
         mode: "slice",
         pathsToIgnore: [],
         pathsToSlice: [],
-        upstreamRepoFiles: files,
+        files,
       }),
     ).toEqual<GitSliceOutput>({
       filesToSlice: files,
@@ -239,7 +239,7 @@ describe("slice mode", () => {
         mode: "slice",
         pathsToIgnore: [".gitignore", "package.json"],
         pathsToSlice: [],
-        upstreamRepoFiles: files,
+        files,
       }),
     ).toEqual<GitSliceOutput>({
       filesToSlice: [
@@ -264,7 +264,7 @@ describe("slice mode", () => {
         mode: "slice",
         pathsToIgnore: ["src/*", "src2"],
         pathsToSlice: ["src2/sub1", "src2/sub2/*"],
-        upstreamRepoFiles: files,
+        files,
       }),
     ).toEqual<GitSliceOutput>({
       filesToSlice: [
@@ -285,7 +285,7 @@ describe("slice mode", () => {
         mode: "slice",
         pathsToIgnore: ["src/*", "src2"],
         pathsToSlice: ["src/main.ts"],
-        upstreamRepoFiles: files,
+        files,
       }),
     ).toEqual<GitSliceOutput>({
       filesToSlice: [
@@ -305,7 +305,7 @@ describe("slice mode", () => {
         mode: "slice",
         pathsToIgnore: ["src"],
         pathsToSlice: ["src/**/to_slice.ts"],
-        upstreamRepoFiles: [
+        files: [
           "src/1.ts",
           "src/to_slice.ts",
           "src/a/1.ts",
@@ -333,7 +333,7 @@ describe("slice mode", () => {
         mode: "slice",
         pathsToIgnore: ["secrets"],
         pathsToSlice: ["secrets/public"],
-        upstreamRepoFiles: [
+        files: [
           "slice",
           "public",
           ".public",
@@ -359,7 +359,7 @@ describe("slice mode", () => {
         mode: "slice",
         pathsToIgnore: ["*"],
         pathsToSlice: [],
-        upstreamRepoFiles: ["a", "a/b"],
+        files: ["a", "a/b"],
       }),
     ).toEqual<GitSliceOutput>({
       filesToSlice: [],
@@ -372,7 +372,7 @@ describe("slice mode", () => {
         mode: "slice",
         pathsToIgnore: ["/*"],
         pathsToSlice: [],
-        upstreamRepoFiles: ["a", "a/b"],
+        files: ["a", "a/b"],
       }),
     ).toEqual<GitSliceOutput>({
       filesToSlice: [],
@@ -385,7 +385,7 @@ describe("slice mode", () => {
         mode: "slice",
         pathsToIgnore: ["*"],
         pathsToSlice: ["c", "d/e"],
-        upstreamRepoFiles: ["a", "a/b", "c", "d/e"],
+        files: ["a", "a/b", "c", "d/e"],
       }),
     ).toEqual<GitSliceOutput>({
       filesToSlice: ["c", "d/e"],
@@ -398,7 +398,7 @@ describe("slice mode", () => {
         mode: "slice",
         pathsToIgnore: ["/*"],
         pathsToSlice: ["/c", "d/e"],
-        upstreamRepoFiles: ["a", "a/b", "c", "d/e"],
+        files: ["a", "a/b", "c", "d/e"],
       }),
     ).toEqual<GitSliceOutput>({
       filesToSlice: ["c", "d/e"],
@@ -411,7 +411,7 @@ describe("slice mode", () => {
         mode: "slice",
         pathsToIgnore: ["/a"],
         pathsToSlice: [],
-        upstreamRepoFiles: ["a", "a/b", "c", "d/e"],
+        files: ["a", "a/b", "c", "d/e"],
       }),
     ).toEqual<GitSliceOutput>({
       filesToSlice: ["c", "d/e"],
@@ -424,7 +424,7 @@ describe("slice mode", () => {
         mode: "slice",
         pathsToIgnore: ["/a"],
         pathsToSlice: ["/a/b"],
-        upstreamRepoFiles: ["a", "a/b", "c", "d/e"],
+        files: ["a", "a/b", "c", "d/e"],
       }),
     ).toEqual<GitSliceOutput>({
       filesToSlice: ["a/b", "c", "d/e"],
@@ -437,7 +437,7 @@ describe("slice mode", () => {
         mode: "slice",
         pathsToIgnore: ["/"],
         pathsToSlice: [],
-        upstreamRepoFiles: ["a", "a/b", "c", "d/e"],
+        files: ["a", "a/b", "c", "d/e"],
       }),
     ).toEqual<GitSliceOutput>({
       filesToSlice: ["a", "a/b", "c", "d/e"],
