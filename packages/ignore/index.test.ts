@@ -141,12 +141,38 @@ describe("ignore mode", () => {
     });
   });
 
+  it("can slice everything using /*", () => {
+    expect(
+      gitslice({
+        mode: "ignore",
+        pathsToIgnore: [],
+        pathsToSlice: ["/*"],
+        upstreamRepoFiles: ["a", "a/b"],
+      }),
+    ).toEqual<GitSliceOutput>({
+      filesToSlice: ["a", "a/b"],
+    });
+  });
+
   it("can slice everything using * except for pathsToIgnore", () => {
     expect(
       gitslice({
         mode: "ignore",
         pathsToIgnore: ["c", "d/e"],
         pathsToSlice: ["*"],
+        upstreamRepoFiles: ["a", "a/b", "c", "d/e"],
+      }),
+    ).toEqual<GitSliceOutput>({
+      filesToSlice: ["a", "a/b"],
+    });
+  });
+
+  it("can slice everything using /* except for pathsToIgnore", () => {
+    expect(
+      gitslice({
+        mode: "ignore",
+        pathsToIgnore: ["c", "d/e"],
+        pathsToSlice: ["/*"],
         upstreamRepoFiles: ["a", "a/b", "c", "d/e"],
       }),
     ).toEqual<GitSliceOutput>({
@@ -340,12 +366,38 @@ describe("slice mode", () => {
     });
   });
 
+  it("can ignore everything using *", () => {
+    expect(
+      gitslice({
+        mode: "slice",
+        pathsToIgnore: ["/*"],
+        pathsToSlice: [],
+        upstreamRepoFiles: ["a", "a/b"],
+      }),
+    ).toEqual<GitSliceOutput>({
+      filesToSlice: [],
+    });
+  });
+
   it("can ignore everything using * except for pathsToSlice", () => {
     expect(
       gitslice({
         mode: "slice",
         pathsToIgnore: ["*"],
         pathsToSlice: ["c", "d/e"],
+        upstreamRepoFiles: ["a", "a/b", "c", "d/e"],
+      }),
+    ).toEqual<GitSliceOutput>({
+      filesToSlice: ["c", "d/e"],
+    });
+  });
+
+  it("can ignore everything using /* except for pathsToSlice", () => {
+    expect(
+      gitslice({
+        mode: "slice",
+        pathsToIgnore: ["/*"],
+        pathsToSlice: ["/c", "d/e"],
         upstreamRepoFiles: ["a", "a/b", "c", "d/e"],
       }),
     ).toEqual<GitSliceOutput>({
