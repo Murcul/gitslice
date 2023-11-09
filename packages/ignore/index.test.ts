@@ -153,6 +153,45 @@ describe("ignore mode", () => {
       filesToSlice: ["a", "a/b"],
     });
   });
+
+  it("can slice paths starting with /", () => {
+    expect(
+      gitslice({
+        mode: "ignore",
+        pathsToIgnore: [],
+        pathsToSlice: ["/a"],
+        upstreamRepoFiles: ["a", "a/b", "c", "d/e"],
+      }),
+    ).toEqual<GitSliceOutput>({
+      filesToSlice: ["a", "a/b"],
+    });
+  });
+
+  it("can slice and ignore paths starting with /", () => {
+    expect(
+      gitslice({
+        mode: "ignore",
+        pathsToIgnore: ["/a/b"],
+        pathsToSlice: ["/a"],
+        upstreamRepoFiles: ["a", "a/b", "c", "d/e"],
+      }),
+    ).toEqual<GitSliceOutput>({
+      filesToSlice: ["a"],
+    });
+  });
+
+  it("a single '/' path has no effect", () => {
+    expect(
+      gitslice({
+        mode: "ignore",
+        pathsToIgnore: [],
+        pathsToSlice: ["/"],
+        upstreamRepoFiles: ["a", "a/b", "c", "d/e"],
+      }),
+    ).toEqual<GitSliceOutput>({
+      filesToSlice: [],
+    });
+  });
 });
 describe("slice mode", () => {
   it("slices everything if no pathsToIgnore", () => {
@@ -311,6 +350,45 @@ describe("slice mode", () => {
       }),
     ).toEqual<GitSliceOutput>({
       filesToSlice: ["c", "d/e"],
+    });
+  });
+
+  it("can ignore paths starting with /", () => {
+    expect(
+      gitslice({
+        mode: "slice",
+        pathsToIgnore: ["/a"],
+        pathsToSlice: [],
+        upstreamRepoFiles: ["a", "a/b", "c", "d/e"],
+      }),
+    ).toEqual<GitSliceOutput>({
+      filesToSlice: ["c", "d/e"],
+    });
+  });
+
+  it("can ignore and slice paths starting with /", () => {
+    expect(
+      gitslice({
+        mode: "slice",
+        pathsToIgnore: ["/a"],
+        pathsToSlice: ["/a/b"],
+        upstreamRepoFiles: ["a", "a/b", "c", "d/e"],
+      }),
+    ).toEqual<GitSliceOutput>({
+      filesToSlice: ["a/b", "c", "d/e"],
+    });
+  });
+
+  it("a single '/' path has no effect", () => {
+    expect(
+      gitslice({
+        mode: "slice",
+        pathsToIgnore: ["/"],
+        pathsToSlice: [],
+        upstreamRepoFiles: ["a", "a/b", "c", "d/e"],
+      }),
+    ).toEqual<GitSliceOutput>({
+      filesToSlice: ["a", "a/b", "c", "d/e"],
     });
   });
 });

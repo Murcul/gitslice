@@ -1,4 +1,4 @@
-import micromatch from "micromatch";
+import micromatch, { parse } from "micromatch";
 
 type GitSliceInput = {
   mode: "ignore" | "slice";
@@ -17,16 +17,20 @@ const matcher = (files: string[], toMatch: string[], toExclude: string[]) => {
     files,
     [
       ...toMatch.flatMap((path) => {
-        if (path.endsWith("*")) {
-          return [path];
+        const parsedPath =
+          path === "/" ? path : path.startsWith("/") ? path.slice(1) : path;
+        if (parsedPath.endsWith("*")) {
+          return [parsedPath];
         }
-        return [path, `${path}/*`];
+        return [parsedPath, `${parsedPath}/*`];
       }),
       ...toExclude.flatMap((path) => {
-        if (path.endsWith("*")) {
-          return [`!${path}`];
+        const parsedPath =
+          path === "/" ? path : path.startsWith("/") ? path.slice(1) : path;
+        if (parsedPath.endsWith("*")) {
+          return [`!${parsedPath}`];
         }
-        return [`!${path}`, `!${path}/*`];
+        return [`!${parsedPath}`, `!${parsedPath}/*`];
       }),
     ],
     {
