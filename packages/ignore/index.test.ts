@@ -366,7 +366,7 @@ describe("slice mode", () => {
     });
   });
 
-  it("can ignore everything using *", () => {
+  it("can ignore everything using /*", () => {
     expect(
       gitslice({
         mode: "slice",
