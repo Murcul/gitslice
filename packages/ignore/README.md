@@ -5,6 +5,7 @@ This library provides the reference/core implementation of the slicing algorithm
 ## Quick start
 
 ### Install
+
 ```bash
 $ npm install @gitstart/gitslice-ignore
 ```
@@ -12,6 +13,7 @@ $ npm install @gitstart/gitslice-ignore
 ### Usage
 
 Input your config and get the files to slice:
+
 ```typescript
 import { gitslice } from "@gitstart/gitslice-ignore"
 

@@ -13,18 +13,25 @@ If you have suggestions or bug reports to submit, [open an issue](https://github
 
 - Fork and clone the repository.
 - Use the node version specified in [.nvmrc](./.nvmrc). If you use nvm, you can run:
+
 ```bash
 $ nvm use
 ```
+
 - Install dependencies:
+
 ```bash
 $ npn install
 ```
+
 - Run the tests in all packages:
+
 ```bash
 $ npm test
 ```
+
 - Build all packages:
+
 ```bash
 $ npm run build
 ```
