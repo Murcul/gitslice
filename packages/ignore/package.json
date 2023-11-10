@@ -1,6 +1,6 @@
 {
   "name": "@gitstart/gitslice-ignore",
-  "version": "0.1.4",
+  "version": "1.0.0",
   "description": "Implements the core algorithm to identify what to slice and what to ignore",
   "keywords": [
     "gitslice",

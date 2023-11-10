@@ -24,7 +24,7 @@ describe("ignore mode", () => {
         mode: "ignore",
         pathsToIgnore: [],
         pathsToSlice: [],
-        upstreamRepoFiles: files,
+        files,
       }),
     ).toEqual<GitSliceOutput>({
       filesToSlice: [],
@@ -37,7 +37,7 @@ describe("ignore mode", () => {
         mode: "ignore",
         pathsToIgnore: [],
         pathsToSlice: ["package-lock.json", ".gitignore"],
-        upstreamRepoFiles: files,
+        files,
       }),
     ).toEqual<GitSliceOutput>({
       filesToSlice: ["package-lock.json", ".gitignore"],
@@ -50,7 +50,7 @@ describe("ignore mode", () => {
         mode: "ignore",
         pathsToIgnore: ["src2/sub1", "src2/sub2/*"],
         pathsToSlice: ["src/*", "src2"], // slice everything in both the src and src2 folders
-        upstreamRepoFiles: files,
+        files,
       }),
     ).toEqual<GitSliceOutput>({
       filesToSlice: [
@@ -70,7 +70,7 @@ describe("ignore mode", () => {
         mode: "ignore",
         pathsToIgnore: ["src/main.ts"],
         pathsToSlice: ["src/*"],
-        upstreamRepoFiles: files,
+        files,
       }),
     ).toEqual<GitSliceOutput>({
       filesToSlice: [
@@ -87,7 +87,7 @@ describe("ignore mode", () => {
         mode: "ignore",
         pathsToIgnore: ["src/**/ignored.ts"],
         pathsToSlice: ["src"],
-        upstreamRepoFiles: [
+        files: [
           "src/1.ts",
           "src/a/1.ts",
           "src/ignored.ts",
@@ -115,7 +115,7 @@ describe("ignore mode", () => {
         mode: "ignore",
         pathsToIgnore: ["src/secrets"],
         pathsToSlice: ["src"],
-        upstreamRepoFiles: [
+        files: [
           "secret",
           "src/slice",
           "src/slice/slice",
@@ -127,6 +127,97 @@ describe("ignore mode", () => {
       filesToSlice: ["src/slice", "src/slice/slice", "src/.slice"],
     });
   });
+
+  it("can slice everything using *", () => {
+    expect(
+      gitslice({
+        mode: "ignore",
+        pathsToIgnore: [],
+        pathsToSlice: ["*"],
+        files: ["a", "a/b"],
+      }),
+    ).toEqual<GitSliceOutput>({
+      filesToSlice: ["a", "a/b"],
+    });
+  });
+
+  it("can slice everything using /*", () => {
+    expect(
+      gitslice({
+        mode: "ignore",
+        pathsToIgnore: [],
+        pathsToSlice: ["/*"],
+        files: ["a", "a/b"],
+      }),
+    ).toEqual<GitSliceOutput>({
+      filesToSlice: ["a", "a/b"],
+    });
+  });
+
+  it("can slice everything using * except for pathsToIgnore", () => {
+    expect(
+      gitslice({
+        mode: "ignore",
+        pathsToIgnore: ["c", "d/e"],
+        pathsToSlice: ["*"],
+        files: ["a", "a/b", "c", "d/e"],
+      }),
+    ).toEqual<GitSliceOutput>({
+      filesToSlice: ["a", "a/b"],
+    });
+  });
+
+  it("can slice everything using /* except for pathsToIgnore", () => {
+    expect(
+      gitslice({
+        mode: "ignore",
+        pathsToIgnore: ["c", "d/e"],
+        pathsToSlice: ["/*"],
+        files: ["a", "a/b", "c", "d/e"],
+      }),
+    ).toEqual<GitSliceOutput>({
+      filesToSlice: ["a", "a/b"],
+    });
+  });
+
+  it("can slice paths starting with /", () => {
+    expect(
+      gitslice({
+        mode: "ignore",
+        pathsToIgnore: [],
+        pathsToSlice: ["/a"],
+        files: ["a", "a/b", "c", "d/e"],
+      }),
+    ).toEqual<GitSliceOutput>({
+      filesToSlice: ["a", "a/b"],
+    });
+  });
+
+  it("can slice and ignore paths starting with /", () => {
+    expect(
+      gitslice({
+        mode: "ignore",
+        pathsToIgnore: ["/a/b"],
+        pathsToSlice: ["/a"],
+        files: ["a", "a/b", "c", "d/e"],
+      }),
+    ).toEqual<GitSliceOutput>({
+      filesToSlice: ["a"],
+    });
+  });
+
+  it("a single '/' path has no effect", () => {
+    expect(
+      gitslice({
+        mode: "ignore",
+        pathsToIgnore: [],
+        pathsToSlice: ["/"],
+        files: ["a", "a/b", "c", "d/e"],
+      }),
+    ).toEqual<GitSliceOutput>({
+      filesToSlice: [],
+    });
+  });
 });
 describe("slice mode", () => {
   it("slices everything if no pathsToIgnore", () => {
@@ -135,7 +226,7 @@ describe("slice mode", () => {
         mode: "slice",
         pathsToIgnore: [],
         pathsToSlice: [],
-        upstreamRepoFiles: files,
+        files,
       }),
     ).toEqual<GitSliceOutput>({
       filesToSlice: files,
@@ -148,7 +239,7 @@ describe("slice mode", () => {
         mode: "slice",
         pathsToIgnore: [".gitignore", "package.json"],
         pathsToSlice: [],
-        upstreamRepoFiles: files,
+        files,
       }),
     ).toEqual<GitSliceOutput>({
       filesToSlice: [
@@ -173,7 +264,7 @@ describe("slice mode", () => {
         mode: "slice",
         pathsToIgnore: ["src/*", "src2"],
         pathsToSlice: ["src2/sub1", "src2/sub2/*"],
-        upstreamRepoFiles: files,
+        files,
       }),
     ).toEqual<GitSliceOutput>({
       filesToSlice: [
@@ -194,7 +285,7 @@ describe("slice mode", () => {
         mode: "slice",
         pathsToIgnore: ["src/*", "src2"],
         pathsToSlice: ["src/main.ts"],
-        upstreamRepoFiles: files,
+        files,
       }),
     ).toEqual<GitSliceOutput>({
       filesToSlice: [
@@ -214,7 +305,7 @@ describe("slice mode", () => {
         mode: "slice",
         pathsToIgnore: ["src"],
         pathsToSlice: ["src/**/to_slice.ts"],
-        upstreamRepoFiles: [
+        files: [
           "src/1.ts",
           "src/to_slice.ts",
           "src/a/1.ts",
@@ -242,7 +333,7 @@ describe("slice mode", () => {
         mode: "slice",
         pathsToIgnore: ["secrets"],
         pathsToSlice: ["secrets/public"],
-        upstreamRepoFiles: [
+        files: [
           "slice",
           "public",
           ".public",
@@ -259,6 +350,97 @@ describe("slice mode", () => {
         "secrets/public/known.txt",
         "secrets/public/.known.txt",
       ],
+    });
+  });
+
+  it("can ignore everything using *", () => {
+    expect(
+      gitslice({
+        mode: "slice",
+        pathsToIgnore: ["*"],
+        pathsToSlice: [],
+        files: ["a", "a/b"],
+      }),
+    ).toEqual<GitSliceOutput>({
+      filesToSlice: [],
+    });
+  });
+
+  it("can ignore everything using /*", () => {
+    expect(
+      gitslice({
+        mode: "slice",
+        pathsToIgnore: ["/*"],
+        pathsToSlice: [],
+        files: ["a", "a/b"],
+      }),
+    ).toEqual<GitSliceOutput>({
+      filesToSlice: [],
+    });
+  });
+
+  it("can ignore everything using * except for pathsToSlice", () => {
+    expect(
+      gitslice({
+        mode: "slice",
+        pathsToIgnore: ["*"],
+        pathsToSlice: ["c", "d/e"],
+        files: ["a", "a/b", "c", "d/e"],
+      }),
+    ).toEqual<GitSliceOutput>({
+      filesToSlice: ["c", "d/e"],
+    });
+  });
+
+  it("can ignore everything using /* except for pathsToSlice", () => {
+    expect(
+      gitslice({
+        mode: "slice",
+        pathsToIgnore: ["/*"],
+        pathsToSlice: ["/c", "d/e"],
+        files: ["a", "a/b", "c", "d/e"],
+      }),
+    ).toEqual<GitSliceOutput>({
+      filesToSlice: ["c", "d/e"],
+    });
+  });
+
+  it("can ignore paths starting with /", () => {
+    expect(
+      gitslice({
+        mode: "slice",
+        pathsToIgnore: ["/a"],
+        pathsToSlice: [],
+        files: ["a", "a/b", "c", "d/e"],
+      }),
+    ).toEqual<GitSliceOutput>({
+      filesToSlice: ["c", "d/e"],
+    });
+  });
+
+  it("can ignore and slice paths starting with /", () => {
+    expect(
+      gitslice({
+        mode: "slice",
+        pathsToIgnore: ["/a"],
+        pathsToSlice: ["/a/b"],
+        files: ["a", "a/b", "c", "d/e"],
+      }),
+    ).toEqual<GitSliceOutput>({
+      filesToSlice: ["a/b", "c", "d/e"],
+    });
+  });
+
+  it("a single '/' path has no effect", () => {
+    expect(
+      gitslice({
+        mode: "slice",
+        pathsToIgnore: ["/"],
+        pathsToSlice: [],
+        files: ["a", "a/b", "c", "d/e"],
+      }),
+    ).toEqual<GitSliceOutput>({
+      filesToSlice: ["a", "a/b", "c", "d/e"],
     });
   });
 });

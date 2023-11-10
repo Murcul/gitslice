@@ -1,11 +1,23 @@
 import micromatch from "micromatch";
 
 type GitSliceInput = {
+  /**
+   * Use "ignore" when you want to ignore everything by default.
+   * Use "slice" when you want to slice everything by default
+   */
   mode: "ignore" | "slice";
+  /**
+   * The paths that you want to ensure are sliced
+   */
   pathsToSlice: string[];
+  /**
+   * The paths that you want to ensure are ignored
+   */
   pathsToIgnore: string[];
-  // All the files that are in the upstream repo, relative to the root folder of the upstream repo.
-  upstreamRepoFiles: string[];
+  /**
+   * All the files in the repo, relative to the root folder of the repo
+   */
+  files: string[];
 };
 
 export type GitSliceOutput = {
@@ -17,16 +29,20 @@ const matcher = (files: string[], toMatch: string[], toExclude: string[]) => {
     files,
     [
       ...toMatch.flatMap((path) => {
-        if (path.endsWith("*")) {
-          return [path];
+        const parsedPath =
+          path === "/" ? path : path.startsWith("/") ? path.slice(1) : path;
+        if (parsedPath.endsWith("*")) {
+          return [parsedPath];
         }
-        return [path, `${path}/*`];
+        return [parsedPath, `${parsedPath}/*`];
       }),
       ...toExclude.flatMap((path) => {
-        if (path.endsWith("*")) {
-          return [`!${path}`];
+        const parsedPath =
+          path === "/" ? path : path.startsWith("/") ? path.slice(1) : path;
+        if (parsedPath.endsWith("*")) {
+          return [`!${parsedPath}`];
         }
-        return [`!${path}`, `!${path}/*`];
+        return [`!${parsedPath}`, `!${parsedPath}/*`];
       }),
     ],
     {
@@ -40,20 +56,18 @@ export function gitslice(input: GitSliceInput): GitSliceOutput {
   if (input.mode === "ignore") {
     return {
       filesToSlice: matcher(
-        input.upstreamRepoFiles,
+        input.files,
         input.pathsToSlice,
         input.pathsToIgnore,
       ),
     };
   }
   const toIgnore = matcher(
-    input.upstreamRepoFiles,
+    input.files,
     input.pathsToIgnore,
     input.pathsToSlice,
   );
   return {
-    filesToSlice: input.upstreamRepoFiles.filter(
-      (file) => !toIgnore.includes(file),
-    ),
+    filesToSlice: input.files.filter((file) => !toIgnore.includes(file)),
   };
 }
