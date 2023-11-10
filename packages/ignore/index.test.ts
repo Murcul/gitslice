@@ -218,6 +218,19 @@ describe("ignore mode", () => {
       filesToSlice: [],
     });
   });
+
+  it("does not slice .git folder and files", () => {
+    expect(
+      gitslice({
+        mode: "ignore",
+        pathsToIgnore: [],
+        pathsToSlice: [".git"],
+        files: [".git/config", ".git/description", "a"],
+      }),
+    ).toEqual<GitSliceOutput>({
+      filesToSlice: [],
+    });
+  });
 });
 describe("slice mode", () => {
   it("slices everything if no pathsToIgnore", () => {
@@ -441,6 +454,19 @@ describe("slice mode", () => {
       }),
     ).toEqual<GitSliceOutput>({
       filesToSlice: ["a", "a/b", "c", "d/e"],
+    });
+  });
+
+  it("does not slice .git files", () => {
+    expect(
+      gitslice({
+        mode: "slice",
+        pathsToIgnore: [],
+        pathsToSlice: [],
+        files: [".git/config", ".git/description", "a"],
+      }),
+    ).toEqual<GitSliceOutput>({
+      filesToSlice: ["a"],
     });
   });
 });
