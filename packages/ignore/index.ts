@@ -48,6 +48,7 @@ const matcher = (files: string[], toMatch: string[], toExclude: string[]) => {
     {
       bash: true,
       dot: true,
+      ignore: [".git", ".git/*"],
     },
   );
 };
@@ -68,6 +69,8 @@ export function gitslice(input: GitSliceInput): GitSliceOutput {
     input.pathsToSlice,
   );
   return {
-    filesToSlice: input.files.filter((file) => !toIgnore.includes(file)),
+    filesToSlice: input.files
+      .filter((file) => !toIgnore.includes(file))
+      .filter((file) => !file.startsWith(".git/")),
   };
 }
