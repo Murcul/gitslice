@@ -21,35 +21,55 @@ type GitSliceInput = {
 };
 
 export type GitSliceOutput = {
+  /**
+   * All the files that should be pulled into the sliced repo
+   */
   filesToSlice: string[];
+  /**
+   * All the files that should not be pulled into the sliced repo
+   */
+  filesToIgnore: string[];
 };
 
-const matcher = (files: string[], toMatch: string[], toExclude: string[]) => {
-  return micromatch(
-    files,
-    [
-      ...toMatch.flatMap((path) => {
-        const parsedPath =
-          path === "/" ? path : path.startsWith("/") ? path.slice(1) : path;
-        if (parsedPath.endsWith("*")) {
-          return [parsedPath];
-        }
-        return [parsedPath, `${parsedPath}/*`];
-      }),
-      ...toExclude.flatMap((path) => {
-        const parsedPath =
-          path === "/" ? path : path.startsWith("/") ? path.slice(1) : path;
-        if (parsedPath.endsWith("*")) {
-          return [`!${parsedPath}`];
-        }
-        return [`!${parsedPath}`, `!${parsedPath}/*`];
-      }),
-    ],
-    {
-      bash: true,
-      dot: true,
-    },
-  );
+const matcher = (
+  files: string[],
+  toMatch: string[],
+  toExclude: string[],
+  not: boolean,
+) => {
+  const parsedToMatch = toMatch.flatMap((path) => {
+    const parsedPath =
+      path === "/" ? path : path.startsWith("/") ? path.slice(1) : path;
+    if (parsedPath.endsWith("*")) {
+      return [parsedPath];
+    }
+    return [parsedPath, `${parsedPath}/*`];
+  });
+  const parsedToExclude = toExclude.flatMap((path) => {
+    const parsedPath =
+      path === "/" ? path : path.startsWith("/") ? path.slice(1) : path;
+    if (parsedPath.endsWith("*")) {
+      return [`!${parsedPath}`];
+    }
+    return [`!${parsedPath}`, `!${parsedPath}/*`];
+  });
+  const defaultOpts: micromatch.Options = {
+    bash: true,
+    dot: true,
+  };
+  if (not) {
+    return micromatch.not(
+      files,
+      [...parsedToMatch, ...parsedToExclude],
+      defaultOpts,
+    );
+  } else {
+    return micromatch(
+      files,
+      [...parsedToMatch, ...parsedToExclude],
+      defaultOpts,
+    );
+  }
 };
 
 export function gitslice(input: GitSliceInput): GitSliceOutput {
@@ -60,6 +80,13 @@ export function gitslice(input: GitSliceInput): GitSliceOutput {
         input.files,
         input.pathsToSlice,
         input.pathsToIgnore,
+        false,
+      ),
+      filesToIgnore: matcher(
+        input.files,
+        input.pathsToSlice,
+        input.pathsToIgnore,
+        true,
       ),
     };
   }
@@ -67,8 +94,10 @@ export function gitslice(input: GitSliceInput): GitSliceOutput {
     input.files,
     input.pathsToIgnore,
     input.pathsToSlice,
+    false,
   );
   return {
     filesToSlice: input.files.filter((file) => !toIgnore.includes(file)),
+    filesToIgnore: toIgnore,
   };
 }
