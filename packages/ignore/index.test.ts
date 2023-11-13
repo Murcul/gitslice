@@ -28,10 +28,12 @@ describe("ignore mode", () => {
       }),
     ).toEqual<GitSliceOutput>({
       filesToSlice: [],
+      filesToIgnore: [],
     });
   });
 
   it("only slices the given file pathToSlice", () => {
+    const files = ["package-lock.json", ".gitignore", "a"];
     expect(
       gitslice({
         mode: "ignore",
@@ -41,6 +43,7 @@ describe("ignore mode", () => {
       }),
     ).toEqual<GitSliceOutput>({
       filesToSlice: ["package-lock.json", ".gitignore"],
+      filesToIgnore: ["a"],
     });
   });
 
@@ -61,6 +64,15 @@ describe("ignore mode", () => {
         "src2/main.ts",
         "src2/sub/main.ts",
       ],
+      filesToIgnore: [
+        "package-lock.json",
+        "src2/sub1/a.ts",
+        "src2/sub2/a.ts",
+        ".gitignore",
+        "package.json",
+        "test.exs",
+        "tsconfig.json",
+      ],
     });
   });
 
@@ -77,6 +89,18 @@ describe("ignore mode", () => {
         "src/main.test.ts",
         "src/vite-env.d.ts",
         "src/utils/help.ts",
+      ],
+      filesToIgnore: [
+        "package-lock.json",
+        "src/main.ts",
+        "src2/main.ts",
+        "src2/sub/main.ts",
+        "src2/sub1/a.ts",
+        "src2/sub2/a.ts",
+        ".gitignore",
+        "package.json",
+        "test.exs",
+        "tsconfig.json",
       ],
     });
   });
@@ -106,6 +130,13 @@ describe("ignore mode", () => {
         "src/a/to_slice.ts",
         "src/b/c/to_slice.ts",
       ],
+      filesToIgnore: [
+        "src/ignored.ts",
+        "src/b/c/ignored.ts",
+        "src/b/ignored.ts",
+        "src/a/b/ignored.ts",
+        "ignored.ts",
+      ],
     });
   });
 
@@ -120,11 +151,12 @@ describe("ignore mode", () => {
           "src/slice",
           "src/slice/slice",
           "src/.slice",
-          "src/secrets/ignored",
+          "src/secrets/.ignored",
         ],
       }),
     ).toEqual<GitSliceOutput>({
       filesToSlice: ["src/slice", "src/slice/slice", "src/.slice"],
+      filesToIgnore: ["secret", "src/secrets/.ignored"],
     });
   });
 
@@ -138,6 +170,7 @@ describe("ignore mode", () => {
       }),
     ).toEqual<GitSliceOutput>({
       filesToSlice: ["a", "a/b"],
+      filesToIgnore: [],
     });
   });
 
@@ -151,6 +184,7 @@ describe("ignore mode", () => {
       }),
     ).toEqual<GitSliceOutput>({
       filesToSlice: ["a", "a/b"],
+      filesToIgnore: [],
     });
   });
 
@@ -164,6 +198,7 @@ describe("ignore mode", () => {
       }),
     ).toEqual<GitSliceOutput>({
       filesToSlice: ["a", "a/b"],
+      filesToIgnore: ["c", "d/e"],
     });
   });
 
@@ -177,6 +212,7 @@ describe("ignore mode", () => {
       }),
     ).toEqual<GitSliceOutput>({
       filesToSlice: ["a", "a/b"],
+      filesToIgnore: ["c", "d/e"],
     });
   });
 
@@ -190,6 +226,7 @@ describe("ignore mode", () => {
       }),
     ).toEqual<GitSliceOutput>({
       filesToSlice: ["a", "a/b"],
+      filesToIgnore: ["c", "d/e"],
     });
   });
 
@@ -203,6 +240,7 @@ describe("ignore mode", () => {
       }),
     ).toEqual<GitSliceOutput>({
       filesToSlice: ["a"],
+      filesToIgnore: ["a/b", "c", "d/e"],
     });
   });
 
@@ -216,6 +254,7 @@ describe("ignore mode", () => {
       }),
     ).toEqual<GitSliceOutput>({
       filesToSlice: [],
+      filesToIgnore: ["a", "a/b", "c", "d/e"],
     });
   });
 
@@ -229,6 +268,7 @@ describe("ignore mode", () => {
       }),
     ).toEqual<GitSliceOutput>({
       filesToSlice: [],
+      filesToIgnore: ["a"],
     });
   });
 });
@@ -243,6 +283,7 @@ describe("slice mode", () => {
       }),
     ).toEqual<GitSliceOutput>({
       filesToSlice: files,
+      filesToIgnore: [],
     });
   });
 
@@ -268,6 +309,7 @@ describe("slice mode", () => {
         "test.exs",
         "tsconfig.json",
       ],
+      filesToIgnore: [".gitignore", "package.json"],
     });
   });
 
@@ -289,6 +331,14 @@ describe("slice mode", () => {
         "test.exs",
         "tsconfig.json",
       ],
+      filesToIgnore: [
+        "src/main.test.ts",
+        "src/vite-env.d.ts",
+        "src/main.ts",
+        "src/utils/help.ts",
+        "src2/main.ts",
+        "src2/sub/main.ts",
+      ],
     });
   });
 
@@ -308,6 +358,15 @@ describe("slice mode", () => {
         "package.json",
         "test.exs",
         "tsconfig.json",
+      ],
+      filesToIgnore: [
+        "src/main.test.ts",
+        "src/vite-env.d.ts",
+        "src/utils/help.ts",
+        "src2/main.ts",
+        "src2/sub/main.ts",
+        "src2/sub1/a.ts",
+        "src2/sub2/a.ts",
       ],
     });
   });
@@ -337,6 +396,13 @@ describe("slice mode", () => {
         "src/b/c/to_slice.ts",
         "sliced.ts",
       ],
+      filesToIgnore: [
+        "src/1.ts",
+        "src/a/1.ts",
+        "src/b/c/ignored.ts",
+        "src/b/ignored.ts",
+        "src/a/b/ignored.ts",
+      ],
     });
   });
 
@@ -363,6 +429,7 @@ describe("slice mode", () => {
         "secrets/public/known.txt",
         "secrets/public/.known.txt",
       ],
+      filesToIgnore: ["secrets/secret1.txt"],
     });
   });
 
@@ -376,6 +443,7 @@ describe("slice mode", () => {
       }),
     ).toEqual<GitSliceOutput>({
       filesToSlice: [],
+      filesToIgnore: ["a", "a/b"],
     });
   });
 
@@ -389,6 +457,7 @@ describe("slice mode", () => {
       }),
     ).toEqual<GitSliceOutput>({
       filesToSlice: [],
+      filesToIgnore: ["a", "a/b"],
     });
   });
 
@@ -402,6 +471,7 @@ describe("slice mode", () => {
       }),
     ).toEqual<GitSliceOutput>({
       filesToSlice: ["c", "d/e"],
+      filesToIgnore: ["a", "a/b"],
     });
   });
 
@@ -415,6 +485,7 @@ describe("slice mode", () => {
       }),
     ).toEqual<GitSliceOutput>({
       filesToSlice: ["c", "d/e"],
+      filesToIgnore: ["a", "a/b"],
     });
   });
 
@@ -428,6 +499,7 @@ describe("slice mode", () => {
       }),
     ).toEqual<GitSliceOutput>({
       filesToSlice: ["c", "d/e"],
+      filesToIgnore: ["a", "a/b"],
     });
   });
 
@@ -441,6 +513,7 @@ describe("slice mode", () => {
       }),
     ).toEqual<GitSliceOutput>({
       filesToSlice: ["a/b", "c", "d/e"],
+      filesToIgnore: ["a"],
     });
   });
 
@@ -454,6 +527,7 @@ describe("slice mode", () => {
       }),
     ).toEqual<GitSliceOutput>({
       filesToSlice: ["a", "a/b", "c", "d/e"],
+      filesToIgnore: [],
     });
   });
 
@@ -467,6 +541,7 @@ describe("slice mode", () => {
       }),
     ).toEqual<GitSliceOutput>({
       filesToSlice: ["a"],
+      filesToIgnore: [],
     });
   });
 });
