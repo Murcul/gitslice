@@ -1,4 +1,4 @@
-import micromatch, { parse } from "micromatch";
+import micromatch from "micromatch";
 
 type GitSliceInput = {
   /**
