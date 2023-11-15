@@ -271,7 +271,27 @@ describe("ignore mode", () => {
       filesToIgnore: ["a"],
     });
   });
+
+  it("paths ending in / are supported", () => {
+    expect(
+      gitslice({
+        mode: "ignore",
+        pathsToIgnore: ["slice/ignore/", "/slice2/ignore/"],
+        pathsToSlice: ["slice/", "/slice2/"],
+        files: [
+          "slice/a.txt",
+          "slice/ignore/a.txt",
+          "slice2/a.txt",
+          "slice2/ignore/a.txt",
+        ],
+      }),
+    ).toEqual<GitSliceOutput>({
+      filesToSlice: ["slice/a.txt", "slice2/a.txt"],
+      filesToIgnore: ["slice/ignore/a.txt", "slice2/ignore/a.txt"],
+    });
+  });
 });
+
 describe("slice mode", () => {
   it("slices everything if no pathsToIgnore", () => {
     expect(
@@ -542,6 +562,25 @@ describe("slice mode", () => {
     ).toEqual<GitSliceOutput>({
       filesToSlice: ["a"],
       filesToIgnore: [],
+    });
+  });
+
+  it("paths ending in / are supported", () => {
+    expect(
+      gitslice({
+        mode: "slice",
+        pathsToIgnore: ["ignore/", "/ignore2/"],
+        pathsToSlice: ["ignore/slice/", "/ignore2/slice/"],
+        files: [
+          "ignore/a.txt",
+          "ignore/slice/a.txt",
+          "ignore2/a.txt",
+          "ignore2/slice/a.txt",
+        ],
+      }),
+    ).toEqual<GitSliceOutput>({
+      filesToSlice: ["ignore/slice/a.txt", "ignore2/slice/a.txt"],
+      filesToIgnore: ["ignore/a.txt", "ignore2/a.txt"],
     });
   });
 });
