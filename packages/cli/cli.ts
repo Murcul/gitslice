@@ -27,8 +27,8 @@ program
   )
   .addOption(
     new Option(
-      "-l, --list <filesToList>",
-      "Whether to list filesToSlice/filesToIgnore",
+      "-o, --output <filesToList>",
+      "Whether to output the filesToSlice/filesToIgnore list",
     )
       .default("slice")
       .choices(["slice", "ignore"]),
@@ -42,7 +42,7 @@ const schema = z.object({
   mode: z.enum(["ignore", "slice"]),
   config: z.string(),
   repo: z.string(),
-  list: z.enum(["slice", "ignore"]),
+  output: z.enum(["slice", "ignore"]),
 });
 
 const parsedOptions = schema.safeParse(options);
@@ -112,7 +112,7 @@ const main = async () => {
     pathsToSlice: parsedConfig.data.folders,
     files,
   });
-  if (parsedOptions.data.list === "ignore") {
+  if (parsedOptions.data.output === "ignore") {
     result.filesToIgnore.forEach((file) => console.log(file));
   } else {
     result.filesToSlice.forEach((file) => console.log(file));
