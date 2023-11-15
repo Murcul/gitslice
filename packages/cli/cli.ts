@@ -24,6 +24,14 @@ program
     "-r, --repo <repoPath>",
     "Where the repo you want to run gitslice on is",
     ".",
+  )
+  .addOption(
+    new Option(
+      "-o, --output <filesToList>",
+      "Whether to output the filesToSlice/filesToIgnore list",
+    )
+      .default("slice")
+      .choices(["slice", "ignore"]),
   );
 
 program.parse();
@@ -34,6 +42,7 @@ const schema = z.object({
   mode: z.enum(["ignore", "slice"]),
   config: z.string(),
   repo: z.string(),
+  output: z.enum(["slice", "ignore"]),
 });
 
 const parsedOptions = schema.safeParse(options);
@@ -101,9 +110,13 @@ const main = async () => {
     mode: parsedOptions.data.mode,
     pathsToIgnore: parsedConfig.data.ignore,
     pathsToSlice: parsedConfig.data.folders,
-    upstreamRepoFiles: files,
+    files,
   });
-  result.filesToSlice.forEach((file) => console.log(file));
+  if (parsedOptions.data.output === "ignore") {
+    result.filesToIgnore.forEach((file) => console.log(file));
+  } else {
+    result.filesToSlice.forEach((file) => console.log(file));
+  }
   process.exit(0);
 };
 
