@@ -31,28 +31,32 @@ export type GitSliceOutput = {
   filesToIgnore: string[];
 };
 
+const parsePath = (path: string, match: boolean) => {
+  const prefix = match ? "" : "!";
+  if (path === "/") {
+    return [`${prefix}${path}`];
+  }
+  const pathWithoutStartingSlash = path.startsWith("/") ? path.slice(1) : path;
+  if (pathWithoutStartingSlash.endsWith("*")) {
+    return [`${prefix}${pathWithoutStartingSlash}`];
+  }
+  if (pathWithoutStartingSlash.endsWith("/")) {
+    return [`${prefix}${pathWithoutStartingSlash}*`];
+  }
+  return [
+    `${prefix}${pathWithoutStartingSlash}`,
+    `${prefix}${pathWithoutStartingSlash}/*`,
+  ];
+};
+
 const matcher = (
   files: string[],
   toMatch: string[],
   toExclude: string[],
   not: boolean,
 ) => {
-  const parsedToMatch = toMatch.flatMap((path) => {
-    const parsedPath =
-      path === "/" ? path : path.startsWith("/") ? path.slice(1) : path;
-    if (parsedPath.endsWith("*")) {
-      return [parsedPath];
-    }
-    return [parsedPath, `${parsedPath}/*`];
-  });
-  const parsedToExclude = toExclude.flatMap((path) => {
-    const parsedPath =
-      path === "/" ? path : path.startsWith("/") ? path.slice(1) : path;
-    if (parsedPath.endsWith("*")) {
-      return [`!${parsedPath}`];
-    }
-    return [`!${parsedPath}`, `!${parsedPath}/*`];
-  });
+  const parsedToMatch = toMatch.flatMap((path) => parsePath(path, true));
+  const parsedToExclude = toExclude.flatMap((path) => parsePath(path, false));
   const defaultOpts: micromatch.Options = {
     bash: true,
     dot: true,
