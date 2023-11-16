@@ -315,6 +315,20 @@ describe("ignore mode", () => {
       ],
     });
   });
+
+  it("does not slice file with longer name when * not used", () => {
+    expect(
+      gitslice({
+        mode: "ignore",
+        pathsToIgnore: [],
+        pathsToSlice: ["slice"],
+        files: ["slice", "sliceignore"],
+      }),
+    ).toEqual<GitSliceOutput>({
+      filesToSlice: ["slice"],
+      filesToIgnore: ["sliceignore"],
+    });
+  });
 });
 
 describe("slice mode", () => {
@@ -620,6 +634,20 @@ describe("slice mode", () => {
     ).toEqual<GitSliceOutput>({
       filesToSlice: ["slice"],
       filesToIgnore: ["ig", "ignore.txt", "ig/nore.txt", "igno/re.txt"],
+    });
+  });
+
+  it("does not slice file with longer name when * not used", () => {
+    expect(
+      gitslice({
+        mode: "slice",
+        pathsToIgnore: ["ignore"],
+        pathsToSlice: [],
+        files: ["ignore", "ignoreslice"],
+      }),
+    ).toEqual<GitSliceOutput>({
+      filesToSlice: ["ignoreslice"],
+      filesToIgnore: ["ignore"],
     });
   });
 });
