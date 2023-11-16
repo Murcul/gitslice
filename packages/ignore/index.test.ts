@@ -290,6 +290,31 @@ describe("ignore mode", () => {
       filesToIgnore: ["slice/ignore/a.txt", "slice2/ignore/a.txt"],
     });
   });
+
+  it("path ending in * are supported", () => {
+    expect(
+      gitslice({
+        mode: "ignore",
+        pathsToIgnore: ["slice/ig*"],
+        pathsToSlice: ["slice"],
+        files: [
+          "slice/a.txt",
+          "slice/ig",
+          "slice/ignore.txt",
+          "slice/ig/nore.txt",
+          "slice/igno/re.txt",
+        ],
+      }),
+    ).toEqual<GitSliceOutput>({
+      filesToSlice: ["slice/a.txt"],
+      filesToIgnore: [
+        "slice/ig",
+        "slice/ignore.txt",
+        "slice/ig/nore.txt",
+        "slice/igno/re.txt",
+      ],
+    });
+  });
 });
 
 describe("slice mode", () => {
@@ -581,6 +606,20 @@ describe("slice mode", () => {
     ).toEqual<GitSliceOutput>({
       filesToSlice: ["ignore/slice/a.txt", "ignore2/slice/a.txt"],
       filesToIgnore: ["ignore/a.txt", "ignore2/a.txt"],
+    });
+  });
+
+  it("path ending in * are supported", () => {
+    expect(
+      gitslice({
+        mode: "slice",
+        pathsToIgnore: ["ig*"],
+        pathsToSlice: [],
+        files: ["slice", "ig", "ignore.txt", "ig/nore.txt", "igno/re.txt"],
+      }),
+    ).toEqual<GitSliceOutput>({
+      filesToSlice: ["slice"],
+      filesToIgnore: ["ig", "ignore.txt", "ig/nore.txt", "igno/re.txt"],
     });
   });
 });
