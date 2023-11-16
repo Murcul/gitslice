@@ -45,7 +45,7 @@ const parsePath = (path: string, match: boolean) => {
   }
   return [
     `${prefix}${pathWithoutStartingSlash}`,
-    `${prefix}${pathWithoutStartingSlash}*`,
+    `${prefix}${pathWithoutStartingSlash}/*`,
   ];
 };
 
