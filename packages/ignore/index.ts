@@ -8,10 +8,12 @@ type GitSliceInput = {
   mode: "ignore" | "slice";
   /**
    * The paths that you want to ensure are sliced
+   * Empty strings are ignored
    */
   pathsToSlice: string[];
   /**
    * The paths that you want to ensure are ignored
+   * Empty strings are ignored
    */
   pathsToIgnore: string[];
   /**
