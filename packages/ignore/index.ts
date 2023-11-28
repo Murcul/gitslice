@@ -8,16 +8,18 @@ type GitSliceInput = {
   mode: "ignore" | "slice";
   /**
    * The paths that you want to ensure are sliced
+   * Empty strings are ignored
    */
   pathsToSlice: string[];
   /**
    * The paths that you want to ensure are ignored
+   * Empty strings are ignored
    */
   pathsToIgnore: string[];
   /**
    * All the files in the repo, relative to the root folder of the repo
    */
-  files: string[];
+  files: ReadonlyArray<string>;
 };
 
 export type GitSliceOutput = {
@@ -49,59 +51,44 @@ const parsePath = (path: string, match: boolean) => {
   ];
 };
 
-const matcher = (
-  files: string[],
-  toMatch: string[],
-  toExclude: string[],
-  not: boolean,
-) => {
+const matcher = (files: string[], toMatch: string[], toExclude: string[]) => {
   const parsedToMatch = toMatch.flatMap((path) => parsePath(path, true));
   const parsedToExclude = toExclude.flatMap((path) => parsePath(path, false));
   const defaultOpts: micromatch.Options = {
     bash: true,
     dot: true,
   };
-  if (not) {
-    return micromatch.not(
-      files,
-      [...parsedToMatch, ...parsedToExclude],
-      defaultOpts,
-    );
-  } else {
-    return micromatch(
-      files,
-      [...parsedToMatch, ...parsedToExclude],
-      defaultOpts,
-    );
-  }
+
+  return micromatch(files, [...parsedToMatch, ...parsedToExclude], defaultOpts);
 };
 
 export function gitslice(input: GitSliceInput): GitSliceOutput {
-  input.files = input.files.filter((file) => !file.startsWith(".git/"));
-  if (input.mode === "ignore") {
+  const parsedInput = {
+    files: input.files.filter((file) => !file.startsWith(".git/")),
+    mode: input.mode,
+    pathsToIgnore: input.pathsToIgnore.filter((path) => path.length > 0),
+    pathsToSlice: input.pathsToSlice.filter((path) => path.length > 0),
+  };
+  if (parsedInput.mode === "ignore") {
+    const toSlice = matcher(
+      parsedInput.files,
+      parsedInput.pathsToSlice,
+      parsedInput.pathsToIgnore,
+    );
     return {
-      filesToSlice: matcher(
-        input.files,
-        input.pathsToSlice,
-        input.pathsToIgnore,
-        false,
-      ),
-      filesToIgnore: matcher(
-        input.files,
-        input.pathsToSlice,
-        input.pathsToIgnore,
-        true,
+      filesToSlice: toSlice,
+      filesToIgnore: parsedInput.files.filter(
+        (file) => !toSlice.includes(file),
       ),
     };
   }
   const toIgnore = matcher(
-    input.files,
-    input.pathsToIgnore,
-    input.pathsToSlice,
-    false,
+    parsedInput.files,
+    parsedInput.pathsToIgnore,
+    parsedInput.pathsToSlice,
   );
   return {
-    filesToSlice: input.files.filter((file) => !toIgnore.includes(file)),
+    filesToSlice: parsedInput.files.filter((file) => !toIgnore.includes(file)),
     filesToIgnore: toIgnore,
   };
 }

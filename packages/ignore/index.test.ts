@@ -28,7 +28,7 @@ describe("ignore mode", () => {
       }),
     ).toEqual<GitSliceOutput>({
       filesToSlice: [],
-      filesToIgnore: [],
+      filesToIgnore: files,
     });
   });
 
@@ -322,6 +322,48 @@ describe("ignore mode", () => {
         mode: "ignore",
         pathsToIgnore: [],
         pathsToSlice: ["slice"],
+        files: ["slice", "sliceignore"],
+      }),
+    ).toEqual<GitSliceOutput>({
+      filesToSlice: ["slice"],
+      filesToIgnore: ["sliceignore"],
+    });
+  });
+
+  it("ignores empty string in pathsToIgnore", () => {
+    expect(
+      gitslice({
+        mode: "ignore",
+        pathsToIgnore: [""],
+        pathsToSlice: ["slice"],
+        files: ["slice", "sliceignore"],
+      }),
+    ).toEqual<GitSliceOutput>({
+      filesToSlice: ["slice"],
+      filesToIgnore: ["sliceignore"],
+    });
+  });
+
+  it("ignores empty string in pathsSlice", () => {
+    expect(
+      gitslice({
+        mode: "ignore",
+        pathsToIgnore: [],
+        pathsToSlice: [""],
+        files: ["slice", "sliceignore"],
+      }),
+    ).toEqual<GitSliceOutput>({
+      filesToSlice: [],
+      filesToIgnore: ["slice", "sliceignore"],
+    });
+  });
+
+  it("ignores empty string in both pathsToIgnore and pathsToSlice", () => {
+    expect(
+      gitslice({
+        mode: "ignore",
+        pathsToIgnore: [""],
+        pathsToSlice: ["slice", ""],
         files: ["slice", "sliceignore"],
       }),
     ).toEqual<GitSliceOutput>({
@@ -648,6 +690,48 @@ describe("slice mode", () => {
     ).toEqual<GitSliceOutput>({
       filesToSlice: ["ignoreslice"],
       filesToIgnore: ["ignore"],
+    });
+  });
+
+  it("ignores empty string in pathsToIgnore", () => {
+    expect(
+      gitslice({
+        mode: "slice",
+        pathsToIgnore: [""],
+        pathsToSlice: [],
+        files: ["ignore", "ignoreslice"],
+      }),
+    ).toEqual<GitSliceOutput>({
+      filesToSlice: ["ignore", "ignoreslice"],
+      filesToIgnore: [],
+    });
+  });
+
+  it("ignores empty string in pathsToSlice", () => {
+    expect(
+      gitslice({
+        mode: "slice",
+        pathsToIgnore: [],
+        pathsToSlice: [""],
+        files: ["ignore", "ignoreslice"],
+      }),
+    ).toEqual<GitSliceOutput>({
+      filesToSlice: ["ignore", "ignoreslice"],
+      filesToIgnore: [],
+    });
+  });
+
+  it("ignores empty strings in both pathsToIgnore and pathsToSlice", () => {
+    expect(
+      gitslice({
+        mode: "slice",
+        pathsToIgnore: [""],
+        pathsToSlice: [""],
+        files: ["ignore", "ignoreslice"],
+      }),
+    ).toEqual<GitSliceOutput>({
+      filesToSlice: ["ignore", "ignoreslice"],
+      filesToIgnore: [],
     });
   });
 });
