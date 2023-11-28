@@ -17,7 +17,7 @@ type GitSliceInput = {
   /**
    * All the files in the repo, relative to the root folder of the repo
    */
-  files: string[];
+  files: ReadonlyArray<string>;
 };
 
 export type GitSliceOutput = {
@@ -61,7 +61,7 @@ const matcher = (files: string[], toMatch: string[], toExclude: string[]) => {
 };
 
 export function gitslice(input: GitSliceInput): GitSliceOutput {
-  const parsedInput: GitSliceInput = {
+  const parsedInput = {
     files: input.files.filter((file) => !file.startsWith(".git/")),
     mode: input.mode,
     pathsToIgnore: input.pathsToIgnore.filter((path) => path.length > 0),
