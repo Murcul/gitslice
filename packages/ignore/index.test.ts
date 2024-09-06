@@ -1,5 +1,5 @@
 import { expect, describe, it } from "vitest";
-import { GitSliceOutput, gitslice } from "./index";
+import { gitslice } from "./index";
 
 const files = [
   "package-lock.json",
