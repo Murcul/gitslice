@@ -1,4 +1,4 @@
-type GitSliceInput = {
+export type GitSliceInput = {
   /**
    * Use "ignore" when you want to ignore everything by default.
    * Use "slice" when you want to slice everything by default
@@ -20,7 +20,7 @@ type GitSliceInput = {
   files: ReadonlyArray<string>;
 };
 
-type GitSliceOutput = {
+export type GitSliceOutput = {
   /**
    * All the files that should be pulled into the sliced repo
    */
